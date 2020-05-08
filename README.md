@@ -38,7 +38,7 @@ Our tech stack will include:
   ├── forms.py *** Your forms
   ├── requirements.txt *** The dependencies we need to install with "pip3 install -r requirements.txt"
   ├── static
-  │   ├── css 
+  │   ├── css
   │   ├── font
   │   ├── ico
   │   ├── img
@@ -124,7 +124,7 @@ To start and run the local development server,
 1. Initialize and activate a virtualenv:
   ```
   $ cd YOUR_PROJECT_DIRECTORY_PATH/
-  $ virtualenv --no-site-packages env
+  $ virtualenv env
   $ source env/bin/activate
   ```
 
@@ -135,7 +135,7 @@ To start and run the local development server,
 
 3. Run the development server:
   ```
-  $ export FLASK_APP=myapp
+  $ export FLASK_APP=app
   $ export FLASK_ENV=development # enables debug mode
   $ python3 app.py
   ```
