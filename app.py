@@ -7,6 +7,7 @@ import dateutil.parser
 import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from flask_moment import Moment
+from sqlalchemy import ARRAY, String
 from flask_sqlalchemy import SQLAlchemy
 import logging
 from logging import Formatter, FileHandler
@@ -45,7 +46,14 @@ class Venue(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    # implement any missing fields, as a database migration using Flask-Migrate
+    genres = db.Column(db.String(120))
+    website = db.Column(db.String(120))
+    seeking_talent = db.Column(db.Boolean, default=False)
+    seeking_description = db.Column(db.String(500), default='')
+
+    def __repr__(self):
+      return 'Venue id:{}, city: {}, state: {}'.format(self.id, self.city, self.state)
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -91,29 +99,32 @@ def index():
 
 @app.route('/venues')
 def venues():
-  # TODO: replace with real venues data.
+  # Done: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
-    "city": "San Francisco",
-    "state": "CA",
-    "venues": [{
-      "id": 1,
-      "name": "The Musical Hop",
-      "num_upcoming_shows": 0,
-    }, {
-      "id": 3,
-      "name": "Park Square Live Music & Coffee",
-      "num_upcoming_shows": 1,
-    }]
-  }, {
-    "city": "New York",
-    "state": "NY",
-    "venues": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }]
+
+  # get venues order by state
+  venues = db.session.query(Venue.id, Venue.name, Venue.city, Venue.state).order_by(Venue.state).all()
+  # temporary variable to compare and group
+  venue_state_and_city = ''
+  data = []
+
+  for venue in venues:
+    if venue_state_and_city == venue.city + venue.state:
+      data[len(data) - 1]["venues"].append({
+        "id": venue.id,
+        "name": venue.name
+      })
+    else:
+      venue_state_and_city = venue.city + venue.state
+      data.append({
+        "city":venue.city,
+        "state":venue.state,
+        "venues": [{
+          "id": venue.id,
+          "name":venue.name,
+        }]
+      })
+
   return render_template('pages/venues.html', areas=data);
 
 @app.route('/venues/search', methods=['POST'])
