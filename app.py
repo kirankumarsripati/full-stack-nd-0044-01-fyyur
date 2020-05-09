@@ -53,7 +53,20 @@ class Venue(db.Model):
     seeking_description = db.Column(db.String(500), default='')
 
     def __repr__(self):
-      return 'Venue id:{}, city: {}, state: {}'.format(self.id, self.city, self.state)
+      return str({
+        'id': self.id,
+        'name': self.name,
+        'city': self.city,
+        'state': self.state,
+        'address': self.address,
+        'phone': self.phone,
+        'image_link': self.image_link,
+        'facebook_link': self.facebook_link,
+        'genres': self.genres,
+        'website': self.website,
+        'seeking_talent': self.seeking_talent,
+        'seeking_description': self.seeking_description
+      })
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -100,7 +113,7 @@ def index():
 @app.route('/venues')
 def venues():
   # Done: replace with real venues data.
-  #       num_shows should be aggregated based on number of upcoming shows per venue.
+  # TODO: num_shows should be aggregated based on number of upcoming shows per venue.
 
   # get venues order by state
   venues = db.session.query(Venue.id, Venue.name, Venue.city, Venue.state).order_by(Venue.state).all()
@@ -129,18 +142,36 @@ def venues():
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
+  # implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-  response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
+  # response={
+  #   "count": 1,
+  #   "data": [{
+  #     "id": 2,
+  #     "name": "The Dueling Pianos Bar",
+  #     "num_upcoming_shows": 0,
+  #   }]
+  # }
+
+  search_term = request.form.get('search_term', '');
+  venue_query = db.session.query(Venue.id, Venue.name)\
+    .filter(Venue.name.ilike('%' + search_term + '%')).all()
+
+  # TODO: implement number of shows
+  venue_list = [];
+  for venue in venue_query:
+    venue_list.append({
+      'id': venue[0],
+      'name': venue[1],
+    })
+
+  response = {
+    'count': len(venue_query),
+    'data': venue_list,
   }
-  return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+
+  return render_template('pages/search_venues.html', results=response, search_term=search_term)
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
