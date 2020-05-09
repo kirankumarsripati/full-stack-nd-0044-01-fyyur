@@ -235,8 +235,10 @@ def show_venue(venue_id):
     Artist.image_link.label('artist_image_link'),
     Show.start_time)\
     .filter(Show.venue_id == venue_id)\
-    .filter(Artist.id == Show.artist_id)\
+    .filter(Show.artist_id == Artist.id)\
     .filter(Show.start_time <= datetime.now()).all()
+
+  selected_venue.past_shows_count = len(selected_venue.past_shows)
 
   selected_venue.upcoming_shows = db.session.query(
     Artist.id.label('artist_id'),
@@ -244,8 +246,10 @@ def show_venue(venue_id):
     Artist.image_link.label('artist_image_link'),
     Show.start_time)\
     .filter(Show.venue_id == venue_id)\
-    .filter(Artist.id == Show.artist_id)\
+    .filter(Show.artist_id == Artist.id)\
     .filter(Show.start_time > datetime.now()).all()
+
+  selected_venue.upcoming_shows_count = len(selected_venue.upcoming_shows)
 
   return render_template('pages/show_venue.html', venue=selected_venue)
 
@@ -292,16 +296,6 @@ def search_artists():
   # implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
-  # response={
-  #   "count": 1,
-  #   "data": [{
-  #     "id": 4,
-  #     "name": "Guns N Petals",
-  #     "num_upcoming_shows": 0,
-  #   }]
-  # }
-
-  # TODO: show num_upcoming_shows
 
   search_term = request.form.get('search_term', '');
   artist_query = db.session.query(Artist.id, Artist.name)\
@@ -319,13 +313,34 @@ def show_artist(artist_id):
   # shows the venue page with the given venue_id
   # replace with real venue data from the venues table, using venue_id
 
-  # TODO: add upcoming_shows & past_shows
-  data = Artist.query.get(artist_id)
+  selected_artist = Artist.query.get(artist_id)
 
-  if not data:
+  if not selected_artist:
     return render_template('errors/404.html')
 
-  return render_template('pages/show_artist.html', artist=data)
+  selected_artist.past_shows = db.session.query(
+    Venue.id.label('venue_id'),
+    Venue.name.label('venue_name'),
+    Venue.image_link.label('venue_image_link'),
+    Show.start_time)\
+    .filter(Show.venue_id == Venue.id)\
+    .filter(Show.artist_id == artist_id)\
+    .filter(Show.start_time <= datetime.now()).all()
+
+  selected_artist.past_shows_count = len(selected_artist.past_shows)
+
+  selected_artist.upcoming_shows = db.session.query(
+    Venue.id.label('venue_id'),
+    Venue.name.label('venue_name'),
+    Venue.image_link.label('venue_image_link'),
+    Show.start_time)\
+    .filter(Show.venue_id == Venue.id)\
+    .filter(Show.artist_id == artist_id)\
+    .filter(Show.start_time > datetime.now()).all()
+
+  selected_artist.upcoming_shows_count = len(selected_artist.upcoming_shows)
+
+  return render_template('pages/show_artist.html', artist=selected_artist)
 
 #  Update
 #  ----------------------------------------------------------------
