@@ -1,4 +1,4 @@
-from app import db, Venue, Artist
+from app import db, Venue, Artist, Show
 
 # Dummy entries for venues
 venue1 = Venue(
@@ -15,16 +15,6 @@ venue1 = Venue(
   image_link = "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60"
 )
 
-# "past_shows": [{
-#   "artist_id": 4,
-#   "artist_name": "Guns N Petals",
-#   "artist_image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
-#   "start_time": "2019-05-21T21:30:00.000Z"
-# }],
-# "upcoming_shows": [],
-# "past_shows_count": 1,
-# "upcoming_shows_count": 0,
-
 venue2 = Venue(
   name = "The Dueling Pianos Bar",
   genres = ["Classical", "R&B", "Hip-Hop"],
@@ -38,11 +28,6 @@ venue2 = Venue(
   image_link = "https://images.unsplash.com/photo-1497032205916-ac775f0649ae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
 )
 
-# "past_shows": [],
-# "upcoming_shows": [],
-# "past_shows_count": 0,
-# "upcoming_shows_count": 0,
-
 venue3 = Venue(
   name = "Park Square Live Music & Coffee",
   genres = ["Rock n Roll", "Jazz", "Classical", "Folk"],
@@ -55,31 +40,6 @@ venue3 = Venue(
   seeking_talent = False,
   image_link = "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80"
 )
-
-# "past_shows": [{
-#   "artist_id": 5,
-#   "artist_name": "Matt Quevedo",
-#   "artist_image_link": "https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
-#   "start_time": "2019-06-15T23:00:00.000Z"
-# }],
-# "upcoming_shows": [{
-#   "artist_id": 6,
-#   "artist_name": "The Wild Sax Band",
-#   "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-#   "start_time": "2035-04-01T20:00:00.000Z"
-# }, {
-#   "artist_id": 6,
-#   "artist_name": "The Wild Sax Band",
-#   "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-#   "start_time": "2035-04-08T20:00:00.000Z"
-# }, {
-#   "artist_id": 6,
-#   "artist_name": "The Wild Sax Band",
-#   "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-#   "start_time": "2035-04-15T20:00:00.000Z"
-# }],
-# "past_shows_count": 1,
-# "upcoming_shows_count": 1,
 
 # Dummy entries for Artist
 artist1 = Artist(
@@ -95,16 +55,6 @@ artist1 = Artist(
   image_link = "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
 )
 
-# "past_shows": [{
-#   "venue_id": 1,
-#   "venue_name": "The Musical Hop",
-#   "venue_image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-#   "start_time": "2019-05-21T21:30:00.000Z"
-# }],
-# "upcoming_shows": [],
-# "past_shows_count": 1,
-# "upcoming_shows_count": 0,
-
 artist2 = Artist(
   name = "Matt Quevedo",
   genres = ["Jazz"],
@@ -116,16 +66,6 @@ artist2 = Artist(
   image_link = "https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
 )
 
-# "past_shows": [{
-#   "venue_id": 3,
-#   "venue_name": "Park Square Live Music & Coffee",
-#   "venue_image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
-#   "start_time": "2019-06-15T23:00:00.000Z"
-# }],
-# "upcoming_shows": [],
-# "past_shows_count": 1,
-# "upcoming_shows_count": 0,
-
 artist3 = Artist(
   name = "The Wild Sax Band",
   genres = ["Jazz", "Classical"],
@@ -136,25 +76,12 @@ artist3 = Artist(
   image_link = "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
 )
 
-# "past_shows": [],
 # "upcoming_shows": [{
 #   "venue_id": 3,
 #   "venue_name": "Park Square Live Music & Coffee",
 #   "venue_image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
 #   "start_time": "2035-04-01T20:00:00.000Z"
-# }, {
-#   "venue_id": 3,
-#   "venue_name": "Park Square Live Music & Coffee",
-#   "venue_image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
-#   "start_time": "2035-04-08T20:00:00.000Z"
-# }, {
-#   "venue_id": 3,
-#   "venue_name": "Park Square Live Music & Coffee",
-#   "venue_image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
-#   "start_time": "2035-04-15T20:00:00.000Z"
-# }],
-# "past_shows_count": 0,
-# "upcoming_shows_count": 3,
+# }
 
 db.session.add(venue1)
 db.session.add(venue2)
@@ -164,3 +91,40 @@ db.session.add(artist1)
 db.session.add(artist2)
 db.session.add(artist3)
 db.session.commit()
+
+show1 = Show(
+  venue_id = venue1.id,
+  artist_id = artist1.id,
+  start_time = "2019-05-21T21:30:00.000Z"
+)
+
+show2 = Show(
+  venue_id = venue2.id,
+  artist_id = artist2.id,
+  start_time = "2019-06-15T23:00:00.000Z"
+)
+
+show3 = Show(
+  venue_id = venue2.id,
+  artist_id = artist3.id,
+  start_time = "2035-04-01T20:00:00.000Z"
+)
+
+show4 = Show(
+  venue_id = venue2.id,
+  artist_id = artist3.id,
+  start_time = "2035-04-08T20:00:00.000Z"
+)
+
+show5 = Show(
+  venue_id = venue2.id,
+  artist_id = artist3.id,
+  start_time = "2035-04-15T20:00:00.000Z"
+)
+
+db.session.add(show1)
+db.session.add(show2)
+db.session.add(show3)
+db.session.add(show4)
+db.session.add(show5)
+db.session.commit();
