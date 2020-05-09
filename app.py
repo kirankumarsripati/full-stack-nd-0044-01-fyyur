@@ -30,6 +30,21 @@ app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 #----------------------------------------------------------------------------#
+# Filters.
+#----------------------------------------------------------------------------#
+
+@app.template_filter('datetime_fmt')
+def format_datetime(value, format='medium'):
+  # Source: http://babel.pocoo.org/en/latest/api/dates.html
+  # parse date objects instead of parsing from strings
+  if format == 'full':
+      format="EEEE MMMM, d, y 'at' h:mma"
+  elif format == 'medium':
+      format="EE MM, dd, y h:mma"
+  return babel.dates.format_datetime(value, format)
+
+
+#----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
 
@@ -108,7 +123,7 @@ class Show(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   venue_id = db.Column(db.Integer, db.ForeignKey(Venue.id), nullable=False)
   artist_id = db.Column(db.Integer, db.ForeignKey(Artist.id), nullable=False)
-  start_time = db.Column(db.DateTime())
+  start_time = db.Column(db.DateTime(timezone=True))
 
   def __repr__(self):
     return str({
@@ -209,13 +224,30 @@ def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # replace with real venue data from the venues table, using venue_id
 
-  # TODO: add upcoming_shows & past_shows
-  data = Venue.query.get(venue_id)
+  selected_venue = Venue.query.get(venue_id)
 
-  if not data:
+  if not selected_venue:
     return render_template('errors/404.html')
 
-  return render_template('pages/show_venue.html', venue=data)
+  selected_venue.past_shows = db.session.query(
+    Artist.id.label('artist_id'),
+    Artist.name.label('artist_name'),
+    Artist.image_link.label('artist_image_link'),
+    Show.start_time)\
+    .filter(Show.venue_id == venue_id)\
+    .filter(Artist.id == Show.artist_id)\
+    .filter(Show.start_time <= datetime.now()).all()
+
+  selected_venue.upcoming_shows = db.session.query(
+    Artist.id.label('artist_id'),
+    Artist.name.label('artist_name'),
+    Artist.image_link.label('artist_image_link'),
+    Show.start_time)\
+    .filter(Show.venue_id == venue_id)\
+    .filter(Artist.id == Show.artist_id)\
+    .filter(Show.start_time > datetime.now()).all()
+
+  return render_template('pages/show_venue.html', venue=selected_venue)
 
 #  Create Venue
 #  ----------------------------------------------------------------
