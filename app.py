@@ -50,7 +50,7 @@ class Venue(db.Model):
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(500), default='')
-    shows = db.relationship('Show', backref='Venue', lazy=True)
+    shows = db.relationship('Show', backref='Venue', lazy='dynamic')
 
     def __repr__(self):
       return str({
@@ -108,7 +108,7 @@ class Show(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   venue_id = db.Column(db.Integer, db.ForeignKey(Venue.id), nullable=False)
   artist_id = db.Column(db.Integer, db.ForeignKey(Artist.id), nullable=False)
-  start_time = db.Column(db.String(), nullable=False)
+  start_time = db.Column(db.DateTime())
 
   def __repr__(self):
     return str({
@@ -147,28 +147,32 @@ def index():
 @app.route('/venues')
 def venues():
   # Done: replace with real venues data.
-  # TODO: num_shows should be aggregated based on number of upcoming shows per venue.
+  #       num_shows should be aggregated based on number of upcoming shows per venue.
 
   # get venues order by state
   venues = db.session.query(Venue.id, Venue.name, Venue.city, Venue.state).order_by(Venue.state).all()
   # temporary variable to compare and group
   venue_state_and_city = ''
+  current_time = datetime.now()
   data = []
 
   for venue in venues:
+    num_upcoming_shows = db.session.query(Show.id).filter(Show.venue_id == venue.id, Show.start_time > current_time).count()
     if venue_state_and_city == venue.city + venue.state:
-      data[len(data) - 1]["venues"].append({
-        "id": venue.id,
-        "name": venue.name
+      data[len(data) - 1]['venues'].append({
+        'id': venue.id,
+        'name': venue.name,
+        'num_upcoming_shows': num_upcoming_shows
       })
     else:
       venue_state_and_city = venue.city + venue.state
       data.append({
-        "city":venue.city,
-        "state":venue.state,
-        "venues": [{
-          "id": venue.id,
-          "name":venue.name,
+        'city':venue.city,
+        'state':venue.state,
+        'venues': [{
+          'id': venue.id,
+          'name':venue.name,
+          'num_upcoming_shows': num_upcoming_shows
         }]
       })
 
