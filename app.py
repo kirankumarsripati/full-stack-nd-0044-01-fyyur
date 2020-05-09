@@ -26,7 +26,7 @@ db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
 
-# connect to a local postgresql database
+# DONE: connect to a local postgresql database
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -61,7 +61,7 @@ class Venue(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
-    # implement any missing fields, as a database migration using Flask-Migrate
+    # DONE: implement any missing fields, as a database migration using Flask-Migrate
     genres = db.Column(db.ARRAY(db.String()))
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, default=False)
@@ -96,7 +96,7 @@ class Artist(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
 
-    # implement any missing fields, as a database migration using Flask-Migrate
+    # DONE: implement any missing fields, as a database migration using Flask-Migrate
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean, default=False)
     seeking_description = db.Column(db.String(500), default='')
@@ -117,7 +117,7 @@ class Artist(db.Model):
         'seeking_description': self.seeking_description
       })
 
-# Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+# DONE: Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 class Show(db.Model):
   __tablename__ = 'Show'
 
@@ -162,7 +162,7 @@ def index():
 
 @app.route('/venues')
 def venues():
-  # Done: replace with real venues data.
+  # DONE: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
 
   # get venues order by state
@@ -196,7 +196,7 @@ def venues():
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # implement search on artists with partial string search. Ensure it is case-insensitive.
+  # DONE: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
 
@@ -223,7 +223,7 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
-  # replace with real venue data from the venues table, using venue_id
+  # DONE: replace with real venue data from the venues table, using venue_id
 
   selected_venue = Venue.query.get(venue_id)
 
@@ -309,14 +309,14 @@ def delete_venue(venue_id):
 #  ----------------------------------------------------------------
 @app.route('/artists')
 def artists():
-  # replace with real data returned from querying the database
+  # DONE: replace with real data returned from querying the database
   data = db.session.query(Artist.id, Artist.name).all();
 
   return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
-  # implement search on artists with partial string search. Ensure it is case-insensitive.
+  # DONE: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
 
@@ -334,7 +334,7 @@ def search_artists():
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
   # shows the venue page with the given venue_id
-  # replace with real venue data from the venues table, using venue_id
+  # DONE: replace with real venue data from the venues table, using venue_id
 
   selected_artist = Artist.query.get(artist_id)
 
@@ -446,7 +446,7 @@ def create_artist_submission():
 @app.route('/shows')
 def shows():
   # displays list of shows at /shows
-  # TODO: replace with r-eal venues data.
+  # DONE: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
 
   data = db.session.query(
