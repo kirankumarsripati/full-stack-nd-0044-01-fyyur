@@ -194,7 +194,7 @@ class ArtistForm(Form):
         choices=genre_choices
     )
     facebook_link = StringField(
-        # TODO implement enum restriction
+        # DONE implement enum restriction
         'facebook_link', validators=[URL(), Length(max=120), Regexp(regex=facebook_regex, message=facebook_invalid_message)]
     )
     website = StringField(
