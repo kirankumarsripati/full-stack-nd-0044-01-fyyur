@@ -1,8 +1,11 @@
 from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField, TextAreaField, ValidationError, IntegerField
-from wtforms.validators import DataRequired, AnyOf, URL, Length, NumberRange
+from wtforms.validators import DataRequired, AnyOf, URL, Length, NumberRange, Regexp
 import phonenumbers
+
+facebook_regex = "((http|https):\/\/|)(www\.|)facebook\.com\/[a-zA-Z0-9.]{1,}";
+facebook_invalid_message = "Facebook URL is Invalid"
 
 def ValidatorChoices(choices, message = 'Invalid choice selected'):
     # only str or list values accepted
@@ -28,8 +31,11 @@ def ValidatorPhone():
             if not (phonenumbers.is_valid_number(input_number)):
                 raise ValidationError('Invalid phone number.')
         except:
-            input_number = phonenumbers.parse("+1"+field.data)
-            if not (phonenumbers.is_valid_number(input_number)):
+            try:
+                input_number = phonenumbers.parse("+1"+field.data)
+                if not (phonenumbers.is_valid_number(input_number)):
+                    raise ValidationError('Invalid phone number.')
+            except:
                 raise ValidationError('Invalid phone number.')
         return None
 
@@ -150,7 +156,7 @@ class VenueForm(Form):
         choices=genre_choices
     )
     facebook_link = StringField(
-        'facebook_link', validators=[URL(), Length(max=120)]
+        'facebook_link', validators=[URL(), Length(max=120), Regexp(regex=facebook_regex, message=facebook_invalid_message)]
     )
     website = StringField(
         'website', validators=[URL(), Length(max=120)]
@@ -189,7 +195,7 @@ class ArtistForm(Form):
     )
     facebook_link = StringField(
         # TODO implement enum restriction
-        'facebook_link', validators=[URL(), Length(max=120)]
+        'facebook_link', validators=[URL(), Length(max=120), Regexp(regex=facebook_regex, message=facebook_invalid_message)]
     )
     website = StringField(
         'website', validators=[URL(), Length(max=120)]
