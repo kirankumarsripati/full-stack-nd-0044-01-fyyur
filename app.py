@@ -166,7 +166,7 @@ def venues():
   #       num_shows should be aggregated based on number of upcoming shows per venue.
 
   # get venues order by state
-  venues = db.session.query(Venue.id, Venue.name, Venue.city, Venue.state).order_by(Venue.state).all()
+  venues = db.session.query(Venue.id, Venue.name, Venue.city, Venue.state).order_by(Venue.city, Venue.state).all()
   # temporary variable to compare and group
   venue_state_and_city = ''
   current_time = datetime.now()
