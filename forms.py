@@ -1,19 +1,39 @@
 from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField, TextAreaField, ValidationError, IntegerField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms.validators import DataRequired, AnyOf, URL, Length, NumberRange
+import phonenumbers
 
-def ValidatorGenres(genres):
-    message = 'Invalid genres values'
-
+def ValidatorChoices(choices, message = 'Invalid choice selected'):
+    # only str or list values accepted
     def _validator(form, field):
-        genres_values = [genre[1] for genre in genres]
-        print('genres', field.data)
-        for value in field.data:
-            if value not in genres_values:
+        choices_values = [choice[1] for choice in choices]
+        if isinstance(field.data, str):
+            if field.data not in choices_values:
                 raise ValidationError(message)
+        else:
+            for value in field.data:
+                if value not in choices_values:
+                    raise ValidationError(message)
 
     return _validator
+
+def ValidatorPhone():
+    # Ref: https://stackoverflow.com/questions/36251149/validating-us-phone-number-in-wtfforms
+    def _validate_phone(form, field):
+        if len(field.data) > 16:
+            raise ValidationError('Invalid phone number.')
+        try:
+            input_number = phonenumbers.parse(field.data)
+            if not (phonenumbers.is_valid_number(input_number)):
+                raise ValidationError('Invalid phone number.')
+        except:
+            input_number = phonenumbers.parse("+1"+field.data)
+            if not (phonenumbers.is_valid_number(input_number)):
+                raise ValidationError('Invalid phone number.')
+        return None
+
+    return _validate_phone;
 
 genre_choices=[
     ('Alternative', 'Alternative'),
@@ -109,40 +129,40 @@ class VenueForm(Form):
         'name', validators=[DataRequired()]
     )
     city = StringField(
-        'city', validators=[DataRequired()]
+        'city', validators=[DataRequired(), Length(max=120)]
     )
     state = SelectField(
-        'state', validators=[DataRequired()],
+        'state', validators=[DataRequired(), ValidatorChoices(choices=state_choices, message='Invalid State')],
         choices=state_choices
     )
     address = StringField(
-        'address', validators=[DataRequired()]
+        'address', validators=[DataRequired(), Length(max=120)]
     )
     phone = StringField(
-        'phone'
+        'phone', validators=[ValidatorPhone()]
     )
     image_link = StringField(
-        'image_link'
+        'image_link', validators=[URL(), Length(max=500)]
     )
     genres = SelectMultipleField(
         # DONE implement enum restriction
-        'genres', validators=[DataRequired(), ValidatorGenres(genre_choices)],
+        'genres', validators=[DataRequired(), ValidatorChoices(choices=genre_choices, message='Invalid Genre')],
         choices=genre_choices
     )
     facebook_link = StringField(
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[URL(), Length(max=120)]
     )
     website = StringField(
-        'website', validators=[URL()]
+        'website', validators=[URL(), Length(max=120)]
     )
     seeking_talent = BooleanField(
         'seeking_talent'
     )
     seeking_description = TextAreaField(
-        'seeking_description'
+        'seeking_description', validators=[Length(max=500)]
     )
     image_link = StringField(
-        'image_link', validators=[URL()]
+        'image_link', validators=[URL(), Length(max=500)]
     )
 
 class ArtistForm(Form):
@@ -150,47 +170,47 @@ class ArtistForm(Form):
         'name', validators=[DataRequired()]
     )
     city = StringField(
-        'city', validators=[DataRequired()]
+        'city', validators=[DataRequired(), Length(max=120)]
     )
     state = SelectField(
-        'state', validators=[DataRequired()],
+        # DONE implement validation logic for state
+        'state', validators=[DataRequired(), ValidatorChoices(choices=state_choices, message='Invalid State')],
         choices=state_choices
     )
     phone = StringField(
-        # TODO implement validation logic for state
-        'phone'
+        'phone', validators=[ValidatorPhone()]
     )
     image_link = StringField(
-        'image_link'
+        'image_link', validators=[Length(max=120)]
     )
     genres = SelectMultipleField(
-        'genres', validators=[DataRequired(), ValidatorGenres(genre_choices)],
+        'genres', validators=[DataRequired(), ValidatorChoices(choices=genre_choices, message='Invalid Genre')],
         choices=genre_choices
     )
     facebook_link = StringField(
         # TODO implement enum restriction
-        'facebook_link', validators=[URL()]
+        'facebook_link', validators=[URL(), Length(max=120)]
     )
     website = StringField(
-        'website', validators=[URL()]
+        'website', validators=[URL(), Length(max=120)]
     )
     seeking_venue = BooleanField(
         'seeking_venue'
     )
     seeking_description = TextAreaField(
-        'seeking_description'
+        'seeking_description', validators=[Length(max=500)]
     )
     image_link = StringField(
-        'image_link', validators=[URL()]
+        'image_link', validators=[URL(), Length(max=500)]
     )
 
-# TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
+# DONE IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
 class ShowForm(Form):
     artist_id = IntegerField(
-        'artist_id', validators=[DataRequired()]
+        'artist_id', validators=[DataRequired(), NumberRange(min=1, message="ID cannot be negative or string")]
     )
     venue_id = IntegerField(
-        'venue_id', validators=[DataRequired()]
+        'venue_id', validators=[DataRequired(), NumberRange(min=1, message="ID cannot be negative or string")]
     )
     start_time = DateTimeField(
         'start_time',
