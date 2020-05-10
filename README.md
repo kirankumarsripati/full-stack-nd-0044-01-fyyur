@@ -141,3 +141,9 @@ To start and run the local development server,
   ```
 
 4. Navigate to Home page [http://localhost:5000](http://localhost:5000)
+
+5. (Optional) If you want to test with dummy data, install dummy-data
+```
+$ flask db upgrade # if you haven't created tables
+$ python3 dummy-data.py
+```
