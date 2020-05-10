@@ -420,28 +420,34 @@ def edit_artist_submission(artist_id):
   # DONE: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
 
-  try:
-    artist = Artist.query.get(artist_id)
-    artist.name = request.form['name']
-    artist.genres = request.form['genres']
-    artist.city = request.form['city']
-    artist.state = request.form['state']
-    artist.phone = request.form['phone']
-    artist.website = request.form['website']
-    artist.facebook_link = request.form['facebook_link']
-    artist.seeking_venue = bool(request.form['seeking_venue'])
-    artist.seeking_description = request.form['seeking_description']
-    artist.image_link = request.form['image_link']
+  form = ArtistForm()
 
-    db.session.commit()
+  if form.validate():
+    try:
+      artist = Artist.query.get(artist_id)
+      artist.name = request.form['name']
+      artist.genres = request.form.getlist('genres')
+      artist.city = request.form['city']
+      artist.state = request.form['state']
+      artist.phone = request.form['phone']
+      artist.website = request.form['website']
+      artist.facebook_link = request.form['facebook_link']
+      artist.seeking_venue = bool(request.form['seeking_venue'])
+      artist.seeking_description = request.form['seeking_description']
+      artist.image_link = request.form['image_link']
 
-    # on successful db update, flash success
-    flash('Artist ' + request.form['name'] + ' was successfully updated!')
-  except SQLAlchemyError as e:
-    # on unsuccessful db update, flash an error instead.
-    flash('An error occurred. Artist ' + request.form['name'] + ' could not be updated! Please try again later.')
-  finally:
-    db.session.close()
+      db.session.commit()
+
+      # on successful db update, flash success
+      flash('Artist ' + request.form['name'] + ' was successfully updated!')
+    except SQLAlchemyError as e:
+      # on unsuccessful db update, flash an error instead.
+      flash('An error occurred. Artist ' + request.form['name'] + ' could not be updated! Please try again later.')
+    finally:
+      db.session.close()
+  else:
+    flash('An error occurred. Artist ' + request.form['name'] + ' could not be updated!')
+    flash(form.errors)
 
   return redirect(url_for('show_artist', artist_id=artist_id))
 
@@ -518,32 +524,38 @@ def create_artist_submission():
   # DONE: insert form data as a new Venue record in the db, instead
   # DONE: modify data to be the data object returned from db insertion
 
-  try:
-    new_artist = Artist(
-      name = request.form['name'],
-      genres = request.form.getlist('genres'),
-      city = request.form['city'],
-      state = request.form['state'],
-      phone = request.form['phone'],
-      website = request.form['website'],
-      facebook_link = request.form['facebook_link'],
-      seeking_venue = bool(request.form['seeking_venue']),
-      seeking_description = request.form['seeking_description'],
-      image_link = request.form['image_link']
-    )
+  form = ArtistForm()
 
-    db.session.add(new_artist)
-    db.session.commit()
+  if form.validate():
+    try:
+      new_artist = Artist(
+        name = request.form['name'],
+        genres = request.form.getlist('genres'),
+        city = request.form['city'],
+        state = request.form['state'],
+        phone = request.form['phone'],
+        website = request.form['website'],
+        facebook_link = request.form['facebook_link'],
+        seeking_venue = bool(request.form['seeking_venue']),
+        seeking_description = request.form['seeking_description'],
+        image_link = request.form['image_link']
+      )
 
-    # on successful db insert, flash success
-    flash('Artist ' + request.form['name'] + ' was successfully listed!')
-  except SQLAlchemyError as e:
-    # DONE: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
-    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-    flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed! Please try again later.')
-  finally:
-    db.session.close()
+      db.session.add(new_artist)
+      db.session.commit()
+
+      # on successful db insert, flash success
+      flash('Artist ' + request.form['name'] + ' was successfully listed!')
+    except SQLAlchemyError as e:
+      # DONE: on unsuccessful db insert, flash an error instead.
+      # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
+      # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+      flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed! Please try again later.')
+    finally:
+      db.session.close()
+  else:
+    flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed!')
+    flash(form.errors)
 
   return render_template('pages/home.html')
 
