@@ -6,12 +6,13 @@
 		<h1 class="monospace">
 			{{ venue.name }}
 		</h1>
-		<div class="row">
+		<div class="row mb-3">
 			<p class="col-xs-6">
 				ID: {{ venue.id }}
 			</p>
 			<div class="col-xs-6 text-right">
 				<a href="{{ url_for('edit_venue', venue_id=venue.id) }}" class="btn btn-primary btn-sm">Edit</a>
+				<button id="delete_venue" data-id="{{venue.id}}" type="button" class="btn btn-danger btn-sm">Delete</button>
 			</div>
 		</div>
 		<div class="genres">
@@ -79,6 +80,22 @@
 		{% endfor %}
 	</div>
 </section>
-
+<script>
+  const deleteBtn = document.getElementById("delete_venue");
+  deleteBtn.addEventListener('click', (e) => {
+		const venueId = e.target.dataset["id"];
+		fetch('/venues/' + venueId , {
+			method: 'DELETE'
+		})
+		.then(response => response.json())
+		.then(jsonResponse => {
+			if(jsonResponse['status'] === 'success'){
+				window.location.href = '/'
+			} else {
+				alert(jsonResponse['message']);
+			}
+		})
+	});
+</script>
 {% endblock %}
 

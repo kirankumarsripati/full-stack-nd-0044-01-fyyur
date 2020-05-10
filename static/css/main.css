@@ -154,7 +154,7 @@ p > i {
 .description {
   max-width: 450px;
 }
-.genres {
+.mb-3, .genres {
   margin-bottom: 15px;
 }
 span.genre {

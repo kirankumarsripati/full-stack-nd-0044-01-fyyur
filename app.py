@@ -5,7 +5,7 @@
 import json
 import dateutil.parser
 import babel
-from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from flask import Flask, render_template, request, Response, flash, redirect, url_for, jsonify
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
@@ -298,12 +298,32 @@ def create_venue_submission():
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
-  # TODO: Complete this endpoint for taking a venue_id, and using
+  # DONE: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
+  # DONE: insert form data as a new Venue record in the db, instead
+  # DONE: modify data to be the data object returned from db insertion
 
-  # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
+  message = {}
+
+  try:
+    Venue.query.filter_by(id = venue_id).delete()
+    db.session.commit()
+
+    message = jsonify({
+      'status': 'success',
+      'message': 'Venue deleted successfully!'
+    })
+  except SQLAlchemyError as e:
+    message = jsonify({
+      'status': 'error',
+      'message': 'An error occurred. Venue could not be delete! Please try again later.'
+    })
+  finally:
+    db.session.close()
+
+  # BONUS CHALLENGE DONE: Implement a button to delete a Venue on a Venue Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
-  return None
+  return message
 
 #  Artists
 #  ----------------------------------------------------------------
