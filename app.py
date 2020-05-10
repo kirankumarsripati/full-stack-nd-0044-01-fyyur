@@ -266,33 +266,40 @@ def create_venue_form():
 def create_venue_submission():
   # DONE: insert form data as a new Venue record in the db, instead
   # DONE: modify data to be the data object returned from db insertion
-  try:
-    new_venue = Venue(
-      name = request.form['name'],
-      genres = request.form.getlist('genres'),
-      address = request.form['address'],
-      city = request.form['city'],
-      state = request.form['state'],
-      phone = request.form['phone'],
-      website = request.form['website'],
-      facebook_link = request.form['facebook_link'],
-      seeking_talent = bool(request.form['seeking_talent']),
-      seeking_description = request.form['seeking_description'],
-      image_link = request.form['image_link']
-    )
 
-    db.session.add(new_venue)
-    db.session.commit()
+  form = VenueForm()
 
-    # on successful db insert, flash success
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
-  except SQLAlchemyError as e:
-    # DONE: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
-    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-    flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed! Please try again later.')
-  finally:
-    db.session.close()
+  if form.validate():
+    try:
+      new_venue = Venue(
+        name = request.form['name'],
+        genres = request.form.getlist('genres'),
+        address = request.form['address'],
+        city = request.form['city'],
+        state = request.form['state'],
+        phone = request.form['phone'],
+        website = request.form['website'],
+        facebook_link = request.form['facebook_link'],
+        seeking_talent = bool(request.form['seeking_talent']),
+        seeking_description = request.form['seeking_description'],
+        image_link = request.form['image_link']
+      )
+
+      db.session.add(new_venue)
+      db.session.commit()
+
+      # on successful db insert, flash success
+      flash('Venue ' + request.form['name'] + ' was successfully listed!')
+    except SQLAlchemyError as e:
+      # DONE: on unsuccessful db insert, flash an error instead.
+      # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
+      # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+      flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed! Please try again later.')
+    finally:
+      db.session.close()
+  else:
+    flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed!')
+    flash(form.errors)
 
   return render_template('pages/home.html')
 
@@ -465,29 +472,35 @@ def edit_venue_submission(venue_id):
   # DONE: take values from the form submitted, and update existing
   # venue record with ID <venue_id> using the new attributes
 
-  try:
-    venue = Venue.query.get(venue_id)
-    venue.name = request.form['name']
-    venue.genres = request.form.getlist('genres')
-    venue.address = request.form['address']
-    venue.city = request.form['city']
-    venue.state = request.form['state']
-    venue.phone = request.form['phone']
-    venue.website = request.form['website']
-    venue.facebook_link = request.form['facebook_link']
-    venue.seeking_talent = bool(request.form['seeking_talent'])
-    venue.seeking_description = request.form['seeking_description']
-    venue.image_link = request.form['image_link']
+  form = VenueForm()
 
-    db.session.commit()
+  if form.validate():
+    try:
+      venue = Venue.query.get(venue_id)
+      venue.name = request.form['name']
+      venue.genres = request.form.getlist('genres')
+      venue.address = request.form['address']
+      venue.city = request.form['city']
+      venue.state = request.form['state']
+      venue.phone = request.form['phone']
+      venue.website = request.form['website']
+      venue.facebook_link = request.form['facebook_link']
+      venue.seeking_talent = bool(request.form['seeking_talent'])
+      venue.seeking_description = request.form['seeking_description']
+      venue.image_link = request.form['image_link']
 
-    # on successful db update, flash success
-    flash('Venue ' + request.form['name'] + ' was successfully updated!')
-  except SQLAlchemyError as e:
-    # on unsuccessful db update, flash an error instead.
-    flash('An error occurred. Venue ' + request.form['name'] + ' could not be updated! Please try again later.')
-  finally:
-    db.session.close()
+      db.session.commit()
+
+      # on successful db update, flash success
+      flash('Venue ' + request.form['name'] + ' was successfully updated!')
+    except SQLAlchemyError as e:
+      # on unsuccessful db update, flash an error instead.
+      flash('An error occurred. Venue ' + request.form['name'] + ' could not be updated! Please try again later.')
+    finally:
+      db.session.close()
+  else:
+    flash('An error occurred. Venue ' + request.form['name'] + ' could not be updated!')
+    flash(form.errors)
 
   return redirect(url_for('show_venue', venue_id=venue_id))
 
